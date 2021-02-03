@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/mruby/iv_benchmark/cli'
+
+module MRuby::IvBenchmark
+  class Download < Cli
+    include FileUtils
+
+    option_implementation
+
+    def run
+      impl = options[:impl]
+      attrs = config.fetch(:implementations).fetch(impl)
+      from = attrs.key?(:path) ? :path : :github
+      rev = attrs.fetch(:revision)
+      repo = "#{'https://github.com/' if from == :github}#{attrs.fetch(from)}"
+      if local_sha(impl)&.==(remote_sha = remote_sha(repo, rev))
+        log :skip, impl
+      else
+        src_dir = src_dir(impl)
+        rm_rf [src_dir, sha_path(impl)]
+        mkdir_p src_dir
+        send("download_from_#{from}", impl, repo, rev)
+        save_sha(impl, remote_sha || remote_sha(repo, rev))
+        log :download, "#{impl} [#{repo} #{rev}]"
+      end
+    end
+
+  private
+
+    def download_from_path(impl, repo, rev)
+      sh "git archive --remote #{repo} #{rev} | tar x -C #{src_dir(impl)}"
+    end
+
+    def download_from_github(impl, repo, rev)
+      require 'open-uri'
+      opts = {stdin_data: URI.open("#{repo}/archive/#{rev}.tar.gz", &:read)}
+      capture(*%W[tar xz -C #{src_dir(impl)} --strip-components 1], **opts)
+    end
+
+    def remote_sha(repo, rev)
+      capture("git", "ls-remote", repo, rev).split[0] || rev
+    end
+
+    def save_sha(impl, sha)
+      File.open(sha_path(impl), "w"){|io| io.puts sha}
+    end
+  end
+end

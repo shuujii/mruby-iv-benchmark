@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/mruby/iv_benchmark/cli'
+
+module MRuby::IvBenchmark
+  class Compiler < Cli
+    def run
+      content = capture("#{compiler} --version")
+      write_file(env_dir("compiler.txt"), content.sub(/\s+\z/m, "\n"))
+    end
+  end
+end

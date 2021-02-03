@@ -1,0 +1,25 @@
+
+<h2 id="environment">Environment</h2>
+
+<h3 id="benchmark-code">Benchmark Code</h3>
+
+<ul>
+<li>**%=File.read(env_dir("code.html"))-%**</li>
+</ul>
+
+<h3 id="implementation">Implementation</h3>
+**%=File.read(env_dir("implementation.html"))-%**
+<h3 id="platform">Platform</h3>
+
+<h4 id="os">OS</h4>
+**%=File.read(env_dir("os.html"))-%**
+<h4 id="hardware">Hardware</h4>
+**%=File.read(env_dir("hardware.html"))-%**
+<h3 id="compiler">Compiler</h3>
+
+<pre><code>**%=File.read(env_dir("compiler.txt"))%**</code></pre>
+
+<h3 id="type-size">Type Size</h3>
+**% IMPLEMENTATIONS.each do |impl| -%**
+**%=File.read("#{env_dir('type-size')}/#{impl}.html")-%**
+**% end -%**

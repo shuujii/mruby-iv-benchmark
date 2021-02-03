@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/mruby/iv_benchmark/cli'
+autoload :Etc, 'etc'
+
+module MRuby::IvBenchmark
+  class Platform < Cli
+    def run
+      run_os
+      mac? ? run_hardware_mac : run_hardware_linux
+    end
+
+  private
+
+    def run_os
+      uname = Etc.uname
+      content = [
+        ["Name", uname[:sysname]],
+        ["Release", uname[:release]],
+        ["Version", uname[:version]],
+      ].inject(+"") do |s, kv|
+        s << kv.join("\t") << "\n"
+      end
+      write_file(env_dir("os.tsv"), content)
+    end
+
+    def run_hardware_mac
+      cmds = %w[system_profiler SPHardwareDataType]
+      write_file(env_dir("hardware.txt"), capture(*cmds))
+    end
+
+    def run_hardware_linux
+      write_file(env_dir("cpu.txt"), File.read("/proc/cpuinfo"))
+      write_file(env_dir("memory.txt"), File.read("/proc/meminfo"))
+    end
+  end
+end

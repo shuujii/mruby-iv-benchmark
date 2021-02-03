@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/mruby/iv_benchmark/cli'
+
+module MRuby::IvBenchmark
+  class Code < Cli
+    def run
+      rev = capture(*%w[git rev-parse @]).chomp
+      loc = github_location("shuujii/mruby-iv-benchmark", rev) + "\n"
+      write_file(env_dir("code.html"), loc)
+    end
+  end
+end

@@ -1,0 +1,18 @@
+implementations:
+  ## 2.1.2
+  - github: mruby/mruby
+#  - path: ../mruby
+    revision: 2.1.2
+    hsl: [118,50,85]
+  ## baseline
+  - github: mruby/mruby
+    revision: d759a73525f2bff367433454e4d2851f7c193693
+#  - path: ../mruby
+#    revision: master
+    hsl: [28,90,61]
+  ## new
+  - github: shuujii/mruby
+    revision: 98d091436d302b50e4d047e10bed0a69845d6af4
+#  - path: ../mruby
+#    revision: reduce-memory-usage-of-instance-variable-table
+    hsl: [213,90,61]

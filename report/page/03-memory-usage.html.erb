@@ -1,0 +1,8 @@
+
+<h2 id="memory-usage">Memory Usage</h2>
+
+<p><code>iv_tbl</code> サイズごとのメモリー使用量 (<code>mrb_malloc</code> や <code>mrb_calloc</code> に実際に指定した値) の計測結果です。</p>
+**%=File.read(data_dir("memory-usage", "chart.html"))-%**
+<p>ハッシュバケットの構造体にパディングがあった 64-bit CPU では 0.4倍-0.85倍程度になっています。構造体のパディングがなかった 32-bit CPU では8バイト減っています。32-bit No-boxing は計測環境では <code>double</code> が4バイトアライメントであるため両実装に差がでていませんが、8バイトアライメントである環境 (Windowsなど) では差がでると思います。</p>
+
+<p>なお、メモリー使用量の最大値は mruby 2.1.2 は上図の値と同じですが、mruby 3 ではハッシュバケットの拡大時に新しい領域にコピーするため最大値は上図の値より大きくなります。</p>

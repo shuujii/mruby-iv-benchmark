@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/mruby/iv_benchmark/cli'
+
+module MRuby::IvBenchmark
+  class BinSize < Cli
+    option_implementation
+    option_build_mode
+
+    def run
+      impl, mode = options.values_at(:impl, :mode)
+      paths = Dir["#{build_dir(impl, mode)}/{bin/mruby,lib/libmruby.a}"]
+      return unless paths.size == 2
+      content = +"# file\tsize\n"
+      paths.each do |path|
+        content << File.basename(path) << "\t" << File.size(path).to_s << "\n"
+      end
+      write_file("#{data_dir("bin-size", impl)}/#{mode}.tsv", content)
+    end
+  end
+end

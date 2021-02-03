@@ -1,0 +1,28 @@
+## Environment
+
+### Benchmark Code
+
+* **%=File.read(env_dir("code.html"))-%**
+
+### Implementation
+
+**%=File.read(env_dir("implementation.html"))-%**
+
+### Platform
+
+#### OS
+
+**%=File.read(env_dir("os.html"))-%**
+
+#### Hardware
+
+**%=File.read(env_dir("hardware.html"))-%**
+
+### Compiler
+
+<pre><code>**%=File.read(env_dir("compiler.txt"))%**</code></pre>
+
+### Type Size
+**% IMPLEMENTATIONS.each do |impl| -%**
+**%=File.read("#{env_dir('type-size')}/#{impl}.html")-%**
+**% end -%**

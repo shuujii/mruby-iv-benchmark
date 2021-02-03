@@ -1,0 +1,16 @@
+
+<h2 id="performance">Performance</h2>
+
+<h3 id="mrb_obj_iv_set"><code>mrb_obj_iv_set</code></h3>
+
+<p>空の <code>iv_tbl</code> に <em>N</em> 個のエントリーを <code>mrb_obj_iv_set</code> で挿入した際の、1回あたりの時間 (上図) と総時間 (下図) の計測結果です。</p>
+**%=File.read(data_dir("performance", "c-set/chart.html"))-%**
+<p>64-bit CPU では1回あたりの時間は両実装とも概ね同等ですが、ハッシュバケットの拡大時は New 実装がやや速いため総時間は New 実装がやや速くなっています。ハッシュバケットの拡大時の性能向上はおそらくデータ構造の変更の影響よりもいくらか無駄な処理を改善したことの影響が大きいかもしれません。</p>
+
+<p>32-bit CPU でも概ね同じ傾向ですが 64-bit CPU と比較すると New 実装がやや遅いようです。64-bit CPU では構造体のパディングが削除されたこととハッシュテーブルのキーが連続したことにより参照局所性が高くなったことが有利に働いているのではないかと考えています。</p>
+
+<h3 id="mrb_obj_iv_get"><code>mrb_obj_iv_get</code></h3>
+
+<p>サイズが <em>N</em> の <code>iv_tbl</code> に対してすべてのキーと1個の存在しないキーを <code>mrb_obj_iv_get</code> で参照した際の、1回あたりの平均時間の計測結果です。</p>
+**%=File.read(data_dir("performance", "c-get/chart.html"))-%**
+<p>New 実装 は 64-bit CPU では若干速いようですが、32-bit CPU では逆にやや遅くなっています。64-bit CPU で速くなっているのは参照局所性が高くなったことが原因ではないかと考えています。32-bit CPU では元々構造体のパディングがなかったためその恩恵があまりなく、逆に何らかのオーバーヘッドのコストが高くなっているのではないかと考えていますが、具体的な原因は分かっていません。</p>

@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/mruby/iv_benchmark/cli'
+
+module MRuby::IvBenchmark
+  class Implementation < Cli
+    def run
+      content = +"# implementation\tlocation\n"
+      config[:implementations].each do |impl, attrs|
+        content << "#{impl.to_s.capitalize}\t#{location(impl, attrs)}\n"
+      end
+      write_file(env_dir("implementation.tsv"), content)
+    end
+
+  private
+
+    def location(impl, attrs)
+      rev = local_sha(impl) || attrs[:revision]
+      (path = attrs[:path]) ?
+        "#{path} #{rev.size < 20 ? rev : rev[0,7]}" :
+        github_location(attrs[:github], rev)
+    end
+  end
+end

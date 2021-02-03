@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/mruby/iv_benchmark/cli'
+
+module MRuby::IvBenchmark
+  class Report < Cli
+    option :environment, ?e,
+      desc: "Create environment fragments."
+    option :chart, ?c,
+      desc: "Create chart fragments."
+    option :document, ?d,
+      desc: "Create report document."
+    option :minify, ?m,
+      desc: "Minify CSS/JavaScript."
+
+    def run
+      require "mruby/iv_benchmark/report/base"
+      opts = {minify: options.delete(:minify)}
+      %i[environment chart document].each{|n|options[n] = true} if options.empty?
+      options.each_key do |name|
+        require "mruby/iv_benchmark/report/#{name}"
+        self.class.const_get(name.capitalize).new.run(opts)
+      end
+    end
+  end
+end

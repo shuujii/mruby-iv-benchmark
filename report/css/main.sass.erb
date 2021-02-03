@@ -1,0 +1,287 @@
+<%# -*- sass -*- -%>
+
+=size($size-or-width, $height: $size-or-width)
+  width: $size-or-width
+  height: $height
+
+$header-height: 2.8rem
+$toc-width: 14.5rem
+$content-padding: .6rem
+$h-margin: 1.9rem 0 1.3rem 0
+$indent-in-content: 1.5rem
+$line-height: 1.5
+
+@font-face
+  font-family: Chart-Normal
+  src: local('Arial'),
+  local('Helvetica'),
+  local('Bitstream Vera Sans'),
+  local('Liberation Sans'),
+  local('Nimbus Sans L'),
+  local('Freesans'),
+  local('Arimo Regular'),
+  local('Arimo-Regular'),
+  url(https://fonts.gstatic.com/s/arimo/v15/P5sMzZCDf9_T_10ZxCFuj5-v.woff2) format('woff2')
+@font-face
+  font-family: Chart-Narrow
+  src: local('PT Sans Narrow'),
+  local('PTSans-Narrow'),
+  url(https://fonts.gstatic.com/s/ptsansnarrow/v12/BngRUXNadjH0qYEzV7ab-oWlsbCGwR2oefDo.woff2) format('woff2')
+
+html, body, div, span, a
+  margin: 0
+  padding: 0
+html
+  color: #000
+  background: <%=COLORS[:bg]%>
+body
+  overflow-y: hidden
+h2
+  $margin-horizontal: $content-padding/-3
+  margin: 0 $margin-horizontal .5em $margin-horizontal
+  padding: 0 (-$margin-horizontal) $content-padding (-$margin-horizontal)
+  font-size: 2.05rem
+  line-height: 1
+  font-weight: bold
+  border-bottom: 1px solid #a4a4a4
+h3, h4, h5
+  margin: $h-margin
+  padding: 0
+  line-height: 1
+  font-weight: bold
+h3
+  font-size: 1.5rem
+h4
+  font-size: 1.25rem
+h5
+  font-size: 1.1rem
+table
+  margin: .8rem $indent-in-content 1rem $indent-in-content
+  padding: 0
+  border-collapse: collapse
+caption
+  font-size: 1.05rem
+  font-weight: normal
+  text-align: left
+  line-height: 1
+  margin: .2rem 0 .4rem 0
+th, td
+  margin: 0
+  padding: .3rem .35rem
+  line-height: 1.2
+  border: 1px solid #b8b8b8
+  box-sizing: border-box
+th
+  font-weight: normal
+  background: #eee
+  text-align: left
+  white-space: nowrap
+thead th
+  text-align: center
+  background: #e2e2e2
+td
+  background: #fafafa
+  &.right
+    text-align: right
+pre
+  margin: .8rem $indent-in-content
+  padding: .4em
+  background: #f1f1f1
+  border: 1px solid #e0e0e0
+  box-sizing: border-box
+  white-space: pre-wrap
+  line-height: 1.3
+*:not(pre) > code
+  margin: 0
+  padding: 0 .15em
+  background: #f8f8f8
+  border: 1px solid #e0e0e0
+  border-radius: .1em
+  box-sizing: border-box
+p
+  margin: .5em 0
+  line-height: $line-height
+a
+  display: inline-block
+  text-decoration: none
+  &:hover
+    text-decoration: underline
+em
+  font-style: oblique
+  margin-right: .1em
+header
+  margin: 0
+  padding: 0 .6rem
+  box-sizing: border-box
+  border-bottom: 1px #bbb solid
+  display: flex
+  background: #2fa4f0
+  > h1
+    margin: 0
+    padding: 0
+    font-size: 1.5rem
+    font-weight: bold
+  > div
+    margin-left: auto
+  a
+    line-height: $header-height
+    color: #fbfbfb
+
+#toc, #content
+  display: inline-block
+  vertical-align: top
+  overflow: auto
+
+#toc
+  +size($toc-width, calc(100vh - #{$header-height}))
+  margin: 0
+  padding: .3rem
+  background: #f5f7fa
+  border-right: 1px solid #e8e8e8
+  box-sizing: border-box
+  ul
+    margin: 0 0 .2rem 0
+    padding: 0
+  li
+    margin: 0
+    padding: 0
+    list-style-type: none
+    &.active
+      background: #888
+      > ul
+        background: #e3e3e3
+        a:hover
+          background: #f0f0f0
+      > a
+        color: #fff
+        &:hover
+          color: #000
+  a
+    margin: 0
+    line-height: 1.7
+    font-size: 1rem
+    text-decoration: none
+    color: #000
+    display: block
+    &:hover
+      background: #eaeaea
+    &.h2
+      padding: 0 .3rem
+    &.h3
+      padding: 0 1rem
+    &.h4
+      padding: 0 1.7rem
+  code
+    border: none
+    background: transparent
+
+#content
+  width: calc(100vw - #{$toc-width + $content-padding * 2})
+  height: calc(100vh - #{$header-height + $content-padding * 2})
+  margin: 0
+  padding: $content-padding
+  ul, ol
+    margin: 0
+    padding-left: $indent-in-content
+  li
+    margin-left: $indent-in-content - .5rem
+    margin-bottom: .2rem
+    line-height: $line-height
+  a
+    color: #0366d6
+
+$chart-border: 1px solid #ccc
+$line-chart-width: <%=LINE_CHART_WIDTH%>px
+$line-chart-height: <%=LINE_CHART_HEIGHT%>px
+$legend-font: 14px Chart-Narrow
+$legend-figure-size: 10px
+.line-chart
+  width: max-content
+  margin: 1rem auto
+  border: $chart-border
+.line-chart
+  .chart
+    +size($line-chart-width, $line-chart-height)
+  .legend-items:first-child > .legend-item
+    cursor: pointer
+    &:hover
+      background: #f8f8f8
+    &.hidden
+      opacity: .3
+.modes
+  display: flex
+  justify-content: space-between
+.mode
+  width: 100%
+  cursor: pointer
+  padding: 0 2px
+  font: 14px/26px Chart-Normal, sans-serif
+  text-align: center
+  box-sizing: border-box
+  border-bottom: $chart-border
+  background: #eee
+  &:hover
+    background: #fafafa
+  &:not(:last-child)
+    border-right: $chart-border
+  &.active
+    border-bottom: none
+    background: transparent
+    &:hover
+      background: transparent
+.chart-item
+.chart
+  display: inline-block
+.legend
+  display: inline-block
+  margin: 8px 6px
+  padding: 0 2px 0 4px
+  vertical-align: top
+  border: 1px dashed #999
+.legend-header
+  margin: 4px 0 -4px 0
+  text-align: center
+  font: $legend-font
+.legend-body
+  padding: 2px
+.legend-items
+  margin: 2px 0 6px 0
+.legend-item
+  height: 18px
+% IMPLEMENTATIONS.each do |impl|
+%   c = COLORS[impl]
+  &.<%=HtmlUtil.class_for(impl)%>
+    > .legend-figure
+      background: <%=c[:figure]%>
+% end
+  &.factor
+    > .legend-figure
+      > div
+        height: $legend-figure-size/2
+        &.area
+          border: 2px solid
+          box-sizing: border-box
+% %w[bottom top].each.with_index(1) do |no_border, n|
+          &:nth-child(<%=n%>)
+            border-<%=no_border%>-width: 0
+% end
+        &.text
+  > div
+    display: inline-block
+    font: $legend-font
+.legend-figure
+  +size($legend-figure-size)
+.legend-label
+  width: 44px
+  margin-left: 2px
+  white-space: nowrap
+.legend-value
+  width: 56px
+  text-align: right
+.legend-unit
+  margin-left: 2px
+.legend-notes > div
+  width: 136px
+  margin: 20px 0 4px 0
+  font: oblique 14px/16px Chart-Narrow
+  color: #555

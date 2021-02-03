@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/mruby/iv_benchmark/cli'
+
+module MRuby::IvBenchmark
+  class Build < Cli
+    include FileUtils
+
+    banner "Usage: #{File.basename($0)} [options] [-- RAKE-ARGS]"
+    option_implementation
+    option_build_mode
+    option :ccache, ?c,
+      desc: "Use ccache."
+
+    def run
+      src_dir = src_dir(options[:impl])
+      build_root = "#{src_dir}/build"
+      build_dir = "#{build_root}/#{options[:mode]}"
+      build_dir_link = "#{build_root}/host"
+      ENV['CC'] = "#{'ccache ' if options[:ccache]}#{compiler}"
+      ENV['MRUBY_CONFIG'] = "#{root}/build_config.rb"
+      ENV['MRUBY_IVBM_BUILD_MODE'] = options[:mode]
+      begin
+        mkdir_p build_dir
+        rm_rf build_dir_link
+        mv build_dir, build_dir_link if File.exist?(build_dir)
+        sh "rake", "-f", "#{src_dir}/Rakefile", "-m", *ARGV
+      ensure
+        mv build_dir_link, build_dir if File.exist?(build_dir_link)
+      end
+    end
+  end
+end
