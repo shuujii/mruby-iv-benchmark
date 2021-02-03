@@ -1,0 +1,13 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><title>Instance Variable Table Benchmark for mruby</title><link rel="stylesheet" href="/mruby-iv-benchmark/css/main.css"></head><body><header><h1><a href="/mruby-iv-benchmark/">Instance Variable Table Benchmark for mruby</a></h1><div><a href="https://github.com/shuujii/mruby-iv-benchmark">GitHub</a></div></header><nav id="toc"><ul><li class="active"><a href="#introduction" class="h2">Introduction</a></li><li><a href="/mruby-iv-benchmark/environment" class="h2">Environment</a><ul><li><a href="/mruby-iv-benchmark/environment#benchmark-code" class="h3">Benchmark Code</a></li><li><a href="/mruby-iv-benchmark/environment#implementation" class="h3">Implementation</a></li><li><a href="/mruby-iv-benchmark/environment#platform" class="h3">Platform</a><ul><li><a href="/mruby-iv-benchmark/environment#os" class="h4">OS</a></li><li><a href="/mruby-iv-benchmark/environment#hardware" class="h4">Hardware</a></li></ul></li><li><a href="/mruby-iv-benchmark/environment#compiler" class="h3">Compiler</a></li><li><a href="/mruby-iv-benchmark/environment#type-size" class="h3">Type Size</a></li></ul></li><li><a href="/mruby-iv-benchmark/memory-usage" class="h2">Memory Usage</a></li><li><a href="/mruby-iv-benchmark/performance" class="h2">Performance</a><ul><li><a href="/mruby-iv-benchmark/performance#mrb_obj_iv_set" class="h3"><code>mrb_obj_iv_set</code></a></li><li><a href="/mruby-iv-benchmark/performance#mrb_obj_iv_get" class="h3"><code>mrb_obj_iv_get</code></a></li></ul></li><li><a href="/mruby-iv-benchmark/binary-size" class="h2">Binary Size</a></li></ul></nav><article id="content">
+<h2 id="introduction">Introduction</h2>
+
+<p><a href="https://github.com/mruby/mruby">mruby</a> におけるインスタンス変数テーブル (以降、構造体名をとって <code>iv_tbl</code> と記します) のメモリー使用量を削減することを目的として、<code>iv_tbl</code> のデータ構造を次のように変更しました。</p>
+
+<ul>
+<li>環境によってはハッシュバケットの構造体にパディングがあるため、パディングができないようにハッシュテーブルのキーのみとバリューのみを連続させた。</li>
+<li><code>iv_tbl</code> サイズの上限を <code>UINT16_MAX</code> にしてサイズと容量の保持領域を削減した。</li>
+<li><code>iv_tbl*</code> がハッシュバケットを直接参照するようにした。</li>
+</ul>
+
+<p>本ベンチマークはこのデータ構造の変更によるメモリー使用量の削減結果と性能への影響を計測したものです。なお、参考として mruby 2.1.2 の計測結果も記載しています。</p>
+</article></body></html>
