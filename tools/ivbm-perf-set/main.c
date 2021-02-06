@@ -16,6 +16,7 @@ create_objects(mrb_state *mrb, mrb_int size)
   for (mrb_int i = 0; i < size; ++i) {
     objects[i] = mrb_obj_new(mrb, mrb->object_class, 0, NULL);
   }
+  ARY_SET_LEN(mrb_ary_ptr(object_ary), size);
   return object_ary;
 }
 

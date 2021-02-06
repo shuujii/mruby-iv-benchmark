@@ -85,6 +85,7 @@ mrb_ivbm_create_symbols(mrb_state *mrb, mrb_int size)
     sprintf(buf, "%05" MRB_PRId, i+1);
     symbols[i] = mrb_symbol_value(mrb_intern_cstr(mrb, buf));
   }
+  ARY_SET_LEN(mrb_ary_ptr(symbol_ary), size);
   return symbol_ary;
 }
 
