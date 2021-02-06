@@ -92,6 +92,7 @@ mrb_ivbm_create_symbols(mrb_state *mrb, mrb_int size)
 void
 mrb_mruby_iv_benchmark_gem_init(mrb_state* mrb)
 {
+  gBaseTime = time_get_absolute();
 }
 
 void
