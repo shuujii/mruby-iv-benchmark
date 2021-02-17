@@ -57,7 +57,7 @@ mrb_ivbm_parse_arg(int argc, char **argv, const char *spec, ...)
   for (i = 1; i < argc; ++i) {
     char *endp;
     mrb_int v = (mrb_int)strtol(argv[i], &endp, 10);
-    if (*endp != 0 || v <= 0) goto failure;
+    if (*endp != 0 || v <= 0) {va_end(ap); goto failure;}
     *(va_arg(ap, mrb_int*)) = v;
   }
   va_end(ap);
