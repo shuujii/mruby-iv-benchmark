@@ -6,6 +6,7 @@
 #include <libgen.h>
 #include <mruby.h>
 #include <mruby/array.h>
+#include <mruby/hash.h>
 #include <mruby/iv_benchmark.h>
 
 static uint64_t gBaseTime;
@@ -68,25 +69,26 @@ mrb_ivbm_parse_arg(int argc, char **argv, const char *spec, ...)
   return FALSE;
 }
 
+uint32_t
+mrb_ivbm_random(void)
+{
+  /* https://ja.wikipedia.org/wiki/Xorshift */
+  static uint32_t v = 2463534242;
+  v ^= (v<<13);
+  v ^= (v>>17);
+  v ^= (v<<5);
+  return v;
+}
+
 mrb_value
 mrb_ivbm_create_symbols(mrb_state *mrb, mrb_int size)
 {
-  mrb_value symbol_ary = mrb_ary_new_capa(mrb, size);
-  mrb_value *symbols = RARRAY_PTR(symbol_ary);
-  char buf[32];
-  for (mrb_int i = 0; i < size; i++) {
-    /*
-     * Because inline symbols are used from high-order bits, at least
-     * low-order 6 bits are always 0 when name length < 5. At this time,
-     * even in hash code, the lower 0 remains as it is, so hash bucket index
-     * becomes all 0 and collisions occur frequently. Therefore, it is fixed
-     * at 5 digits.
-     */
-    sprintf(buf, "%05" MRB_PRId, i+1);
-    symbols[i] = mrb_symbol_value(mrb_intern_cstr(mrb, buf));
-  }
-  ARY_SET_LEN(mrb_ary_ptr(symbol_ary), size);
-  return symbol_ary;
+  mrb_value hash = mrb_hash_new_capa(mrb, size);
+  do {
+    mrb_sym v = mrb_ivbm_random() & 0xffffff;  /* non-inline */
+    if (v != 0) mrb_hash_set(mrb, hash, mrb_symbol_value(v), mrb_true_value());
+  } while (mrb_hash_size(mrb, hash) < size);
+  return mrb_hash_keys(mrb, hash);
 }
 
 void

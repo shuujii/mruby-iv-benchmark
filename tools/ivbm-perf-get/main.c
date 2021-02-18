@@ -8,12 +8,12 @@
 #include <mruby/iv_benchmark.h>
 
 static void
-measurement(mrb_state *mrb, mrb_int max_iv_size, int max_count,
+measurement(mrb_state *mrb, mrb_value symbol_ary, int max_count,
             int *counts, mrb_int *times)
 {
   mrb_int iv_size, i, t;
   int ai = mrb_gc_arena_save(mrb), loop_count, c;
-  mrb_value symbol_ary = mrb_ivbm_create_symbols(mrb, max_iv_size+1);
+  mrb_int max_iv_size = RARRAY_LEN(symbol_ary) - 1;
   mrb_value *symbols = RARRAY_PTR(symbol_ary);
   mrb_value obj = mrb_obj_new(mrb, mrb->object_class, 0, NULL);
   struct RObject *o = mrb_obj_ptr(obj);
@@ -37,12 +37,12 @@ measurement(mrb_state *mrb, mrb_int max_iv_size, int max_count,
 }
 
 static int
-estimate_count(mrb_state *mrb, mrb_int max_iv_size, mrb_int measurement_time)
+estimate_count(mrb_state *mrb, mrb_value symbol_ary, mrb_int measurement_time)
 {
-  int estimation_count = 2500000/max_iv_size;
-  int counts[max_iv_size+1];
-  mrb_int times[max_iv_size+1], total_time = 0, i;
-  measurement(mrb, max_iv_size, estimation_count, counts, times);
+  mrb_int max_iv_size = RARRAY_LEN(symbol_ary) - 1;
+  int estimation_count = 2500000/max_iv_size, counts[max_iv_size+1];
+  mrb_int total_time = 0, i, times[max_iv_size+1];
+  measurement(mrb, symbol_ary, estimation_count, counts, times);
   for (i = 0; i <= max_iv_size; ++i) total_time += times[i];
   DPRINTF("estimate time: %"MRB_PRId"\n", total_time);
   return (int)ceil((double)estimation_count / total_time * measurement_time);
@@ -60,12 +60,14 @@ main(int argc, char **argv)
     mrb_int iv_size, times[max_iv_size+1];
     int counts[max_iv_size+1];
     int max_count;  /* max iteration per iv size */
+    mrb_value symbol_ary;
     if (!(mrb = mrb_ivbm_open_mruby(NULL))) goto final;
     mrb_ivbm_disable_gc(mrb);
-    max_count = estimate_count(mrb, max_iv_size, measurement_time);
+    symbol_ary = mrb_ivbm_create_symbols(mrb, max_iv_size+1);
+    max_count = estimate_count(mrb, symbol_ary, measurement_time);
     DPRINTF("max_count: %d\n", max_count);
     mrb_ivbm_disable_gc(mrb);
-    measurement(mrb, max_iv_size, max_count, counts, times);
+    measurement(mrb, symbol_ary, max_count, counts, times);
     puts("# iv size\ti/s\titerations\tseconds");
     for (iv_size = 0; iv_size <= max_iv_size; ++iv_size) {
       mrb_int t = times[iv_size];

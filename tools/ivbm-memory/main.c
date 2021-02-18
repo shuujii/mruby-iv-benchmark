@@ -78,16 +78,14 @@ main(int argc, char **argv)
 
   if (!mrb_ivbm_parse_arg(argc, argv, "[IV-SIZE]", &max_iv_size)) goto final;
   if (!(mrb = mrb_ivbm_open_mruby(mem_alloc))) goto final;
-  mrb_value symbol_ary = mrb_ivbm_create_symbols(mrb, max_iv_size);
-  mrb_value *symbols = RARRAY_PTR(symbol_ary);
   mrb_value obj = mrb_obj_new(mrb, mrb->object_class, 0, NULL);
   mrb_ivbm_disable_gc(mrb);
   mem_reset_alloc_size();
   puts("# iv size\ttotal alloc size\tmax alloc size");
   print_alloc_size(iv_size);
   for (iv_size = 1; iv_size <= max_iv_size; ++iv_size) {
-    mrb_value v = symbols[iv_size-1];
-    mrb_iv_set(mrb, obj, mrb_symbol(v), v);
+    mrb_sym v = (mrb_sym)iv_size;
+    mrb_iv_set(mrb, obj, v, mrb_symbol_value(v));
     print_alloc_size(iv_size);
   }
 

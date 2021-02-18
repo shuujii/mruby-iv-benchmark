@@ -18,6 +18,7 @@ mrb_state* mrb_ivbm_open_mruby(mrb_allocf alloc_func);
 int mrb_ivbm_close_mruby(mrb_state *mrb);
 mrb_bool mrb_ivbm_parse_arg(int argc, char **argv, const char *spec, ...);
 mrb_int mrb_ivbm_time(void);
+uint32_t mrb_ivbm_random(void);
 mrb_value mrb_ivbm_create_symbols(mrb_state *mrb, mrb_int size);
 
 static inline void
